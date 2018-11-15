@@ -38,12 +38,13 @@ public class CheckSpelling {
 	public static List<String> readBook() {
 		long start = System.nanoTime();
 		List<String> words;
+		List<String> wordsList = new ArrayList<String>();
 		//String line;
 		try {
 			words = Files.readAllLines(new File("src/main/resources/Alice.txt").toPath());
 			//List<String> wordsList= WordSplitter.splitTextToWords(line);
 			for(String line: words) {
-			words=WordSplitter.splitTextToWords(line);
+				wordsList.addAll(WordSplitter.splitTextToWords(line));
 			}
 			
 			
@@ -53,7 +54,7 @@ public class CheckSpelling {
 		long end = System.nanoTime();
 		double time = (end - start) / 1e9;
 		System.out.println("Loaded " + words.size() + " book entries in " + time +" seconds.");
-		return words;
+		return wordsList;
 	}
 	
 	/**
@@ -68,6 +69,9 @@ public class CheckSpelling {
 		for (String w : words) {
 			if (dictionary.contains(w)) {
 				found++;
+			}
+			else {
+				System.out.println(w);
 			}
 		}
 		
