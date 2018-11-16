@@ -115,7 +115,7 @@ public class CharTrie extends AbstractSet<String> {
 		}
 		
 		/**
-		 * Incomplete method to compute how many nodes are in this Trie. Recursive.
+		 * Method to compute how many nodes are in this Trie. Recursive.
 		 * @return the count of nodes that exist in the Trie, starting from here.
 		 */
 
@@ -123,11 +123,11 @@ public class CharTrie extends AbstractSet<String> {
 			int count=1;
 			for (int i=0;i<links.length; i++) {
 				if (this.links[i]!=null) {
-				count+=this.links[i].countNodes();
+					count+=this.links[i].countNodes();
+				}
 			}
-		}
 			return count;
-	}
+		}
 	}		
 
 	/**
@@ -138,7 +138,7 @@ public class CharTrie extends AbstractSet<String> {
 	public int countNodes() {
 		return root.countNodes();
 	}
-	//return root.countNodes(size, root);
+	
 	/**
 	 * We would need to create an object that kept the recursion state around.
 	 * We will talk about depth-first search (part of the solution to this) next week.

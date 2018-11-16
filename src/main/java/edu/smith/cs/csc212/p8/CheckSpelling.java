@@ -39,10 +39,8 @@ public class CheckSpelling {
 		long start = System.nanoTime();
 		List<String> words;
 		List<String> wordsList = new ArrayList<String>();
-		//String line;
 		try {
 			words = Files.readAllLines(new File("src/main/resources/Alice.txt").toPath());
-			//List<String> wordsList= WordSplitter.splitTextToWords(line);
 			for(String line: words) {
 				wordsList.addAll(WordSplitter.splitTextToWords(line));
 			}
@@ -69,10 +67,10 @@ public class CheckSpelling {
 		for (String w : words) {
 			if (dictionary.contains(w)) {
 				found++;
-				//System.out.println(w);
 			}
+			//Print out words that are misspelled
 			else {
-				System.out.println(w);
+				//System.out.println(w);
 			}
 		}
 		
@@ -83,6 +81,13 @@ public class CheckSpelling {
 		System.out.println(dictionary.getClass().getSimpleName()+": Lookup of items found="+fractionFound+" time="+nsPerItem+" ns/item");
 	}
 	
+	/**
+	 * 
+	 * @param listOfWords-list of words inputed
+	 * @param numSamples-how big sample size is
+	 * @param fractionYes- percent/fraction of sample that will be real words
+	 * @return realWords-all the words, both fake and real
+	 */
 	public static List<String> createMixedDataset(List<String> listOfWords, int numSamples, double fractionYes) {
 		ArrayList<String> realWords = new ArrayList<String>();
 		for(int i=0;i<numSamples*fractionYes;i++) {
@@ -94,22 +99,22 @@ public class CheckSpelling {
 		return realWords;
 	}
 	
-//	public static void percentHitMiss(int numSamples, double fractionYes) {
-//		double percent=(fractionYes/(double)numSamples)*100;
-//	}
-	
 	public static void main(String[] args) {
 		// --- Load the dictionary.
 		List<String> listOfWords = loadDictionary();
+		
+		// --- Load the book.
 		List<String> listofBookWords=readBook();
 		
-		// --- Create a bunch of data structures for testing:
+		// --- Find and Print the Creation Times of the various data structures:
+		//TreeSet
 		long startTreeTime = System.nanoTime();
 		TreeSet<String> treeOfWords = new TreeSet<>(listOfWords);
 		long endTreeTime = System.nanoTime();
 		System.out.println("Tree Creation time is");
 		System.out.println(endTreeTime-startTreeTime);
 		
+		//TreeSet Loop
 		long startTreeLoop=System.nanoTime();
 		TreeSet<String> treeOfWords2 = new TreeSet<>();
 		for (String w : listOfWords) {
@@ -118,12 +123,14 @@ public class CheckSpelling {
 		System.out.println("Tree Loop Creation Time is");
 		System.out.println(endTreeLoop-startTreeLoop);
 		
+		//HashSet
 		long startHashTime = System.nanoTime();
 		HashSet<String> hashOfWords = new HashSet<>(listOfWords);
 		long endHashTime=System.nanoTime();
 		System.out.println("Hash Creation Time is");
 		System.out.println(endHashTime-startHashTime);
 		
+		//HashSet Loop
 		long startHashLoop=System.nanoTime();
 		HashSet<String> hashOfWords2 = new HashSet<>();
 		for (String w : listOfWords) {
@@ -132,12 +139,14 @@ public class CheckSpelling {
 		System.out.println("Hash Loop Creation Time is");
 		System.out.println(endHashLoop-startHashLoop);
 		
+		//Sorted StringList Set
 		long startListTime=System.nanoTime();
 		SortedStringListSet bsl = new SortedStringListSet(listOfWords);
 		long endListTime=System.nanoTime();
 		System.out.println("List Creation Time is");
 		System.out.println(endListTime-startListTime);
 		
+		//CharTrie
 		long startCharTime=System.nanoTime();
 		CharTrie trie = new CharTrie();
 		for (String w : listOfWords) {
@@ -146,6 +155,7 @@ public class CheckSpelling {
 		System.out.println("CharTrie Creation Time is");
 		System.out.println(endCharTime-startCharTime);
 		
+		//LLHash
 		long startLLTime=System.nanoTime();
 		LLHash hm100k = new LLHash(100000);
 		for (String w : listOfWords) {
@@ -155,11 +165,11 @@ public class CheckSpelling {
 		System.out.println(endLLTime-startLLTime);
 		
 		// --- Make sure that every word in the dictionary is in the dictionary:
-//		timeLookup(listOfWords, treeOfWords);
-//		timeLookup(listOfWords, hashOfWords);
-//		timeLookup(listOfWords, bsl);
-//		timeLookup(listOfWords, trie);
-//		timeLookup(listOfWords, hm100k);
+		timeLookup(listOfWords, treeOfWords);
+		timeLookup(listOfWords, hashOfWords);
+		timeLookup(listOfWords, bsl);
+		timeLookup(listOfWords, trie);
+		timeLookup(listOfWords, hm100k);
 		
 
 		//---Make sure every word in book is in dictionary
@@ -171,23 +181,20 @@ public class CheckSpelling {
 		
 		
 		// --- Create a dataset of mixed hits and misses:
-		//List<String> hitsAndMisses = new ArrayList<>();
 		//Warm Up, gets rid of spikes in graph
 		for (int j=0; j<2; j++) {
 			System.out.println("Warm-up, j="+j);
 			for (int i=0; i<11; i++) {
 				double fraction = i / 10.0;
 				// --- Create a dataset of mixed hits and misses:
-//				List<String> hitsAndMisses = createMixedDataset(listOfWords, 10000, fraction);
-//				timeLookup(hitsAndMisses, treeOfWords);
-//				timeLookup(hitsAndMisses, hashOfWords);
-//				timeLookup(hitsAndMisses, bsl);
-//				timeLookup(hitsAndMisses, trie);
-//				timeLookup(hitsAndMisses, hm100k);
+				List<String> hitsAndMisses = createMixedDataset(listOfWords, 10000, fraction);
+				timeLookup(hitsAndMisses, treeOfWords);
+				timeLookup(hitsAndMisses, hashOfWords);
+				timeLookup(hitsAndMisses, bsl);
+				timeLookup(hitsAndMisses, trie);
+				timeLookup(hitsAndMisses, hm100k);
 			}
 		}
-		
-		
 		
 		// --- linear list timing:
 		// Looking up in a list is so slow, we need to sample:
@@ -196,7 +203,6 @@ public class CheckSpelling {
 		System.out.println("End of list: ");
 		timeLookup(listOfWords.subList(listOfWords.size()-100, listOfWords.size()), listOfWords);
 		
-	
 		// --- print statistics about the data structures:
 		System.out.println("Count-Nodes: "+trie.countNodes());
 		System.out.println("Count-Items: "+hm100k.size());
@@ -205,7 +211,6 @@ public class CheckSpelling {
 		System.out.println("Count-Used-Buckets[100k]: "+hm100k.countUsedBuckets());
 		System.out.println("Load-Factor[100k]: "+hm100k.countUsedBuckets() / 100000.0);
 
-		
 		System.out.println("log_2 of listOfWords.size(): "+listOfWords.size());
 		
 		System.out.println("Done!");

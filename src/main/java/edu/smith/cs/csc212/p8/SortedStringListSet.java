@@ -44,11 +44,11 @@ public class SortedStringListSet extends AbstractSet<String> {
 	}
 	
 	/**
-	 * TODO: replace this binarySearch with your own.
-	 * @param query  - the string to look for.
-	 * @param start - the left-hand side of this search (inclusive)
-	 * @param end - the right-hand side of this search (exclusive)
-	 * @return the index found, OR negative if not found.
+	 * 
+	 * @param value- key that data gets compared to
+	 * @param start-start index of data
+	 * @param end-end index of data
+	 * @return - index looking for
 	 */
 	
 	public int binarySearch( String value, int start, int end) {
