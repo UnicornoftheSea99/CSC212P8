@@ -69,6 +69,7 @@ public class CheckSpelling {
 		for (String w : words) {
 			if (dictionary.contains(w)) {
 				found++;
+				//System.out.println(w);
 			}
 			else {
 				System.out.println(w);

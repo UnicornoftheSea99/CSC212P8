@@ -40,7 +40,7 @@ public class SortedStringListSet extends AbstractSet<String> {
 	 */
 	@Override
 	public boolean contains(Object key) {
-		return binarySearch((String) key, 0, this.data.size()) >= 0;
+		return binarySearch((String) key, 0, this.data.size()-1) >= 0;
 	}
 	
 	/**
@@ -50,9 +50,20 @@ public class SortedStringListSet extends AbstractSet<String> {
 	 * @param end - the right-hand side of this search (exclusive)
 	 * @return the index found, OR negative if not found.
 	 */
-	private int binarySearch(String query, int start, int end) {
-		// TODO: replace this with your own binary search.
-		return Collections.binarySearch(this.data.subList(start, end), query);
+	
+	public int binarySearch( String value, int start, int end) {
+
+		while (start <= end) {
+			int mid = start+((end-start)/ 2);
+	        if(this.data.get(mid).compareTo(value) > 0) {
+	            return binarySearch( value, start, mid - 1);
+	        } else if (this.data.get(mid).compareTo(value)<0) {
+	            return binarySearch(value, mid + 1, end);
+	        }else {
+		            return mid;
+	        }
+		}
+		return -(end+1);
 	}
 
 	/**
